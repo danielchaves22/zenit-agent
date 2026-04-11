@@ -1,0 +1,15 @@
+{
+  "name": "@myagent/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"config build not required\"",
+    "typecheck": "echo \"config typecheck not required\"",
+    "lint": "echo \"config lint not required\"",
+    "test": "echo \"config tests not required\""
+  },
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json"
+  }
+}

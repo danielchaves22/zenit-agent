@@ -1,0 +1,13 @@
+{
+  "name": "@myagent/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"Scaffold React Native pendente (Expo/RN CLI)\"",
+    "build": "echo \"mobile build not configured\"",
+    "typecheck": "echo \"mobile typecheck pending scaffold\"",
+    "lint": "echo \"mobile lint pending scaffold\"",
+    "test": "echo \"mobile tests pending scaffold\""
+  },
+  "dependencies": {}
+}
