@@ -2,12 +2,27 @@
   "name": "@myagent/mobile",
   "version": "0.1.0",
   "private": true,
+  "main": "expo/AppEntry.js",
   "scripts": {
-    "dev": "echo \"Scaffold React Native pendente (Expo/RN CLI)\"",
-    "build": "echo \"mobile build not configured\"",
-    "typecheck": "echo \"mobile typecheck pending scaffold\"",
+    "dev": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build": "echo \"Use EAS para build de produção\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "echo \"mobile lint pending scaffold\"",
     "test": "echo \"mobile tests pending scaffold\""
   },
-  "dependencies": {}
+  "dependencies": {
+    "@myagent/sdk-client": "workspace:*",
+    "expo": "~53.0.20",
+    "expo-constants": "^55.0.13",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.0.0",
+    "react-native": "0.79.6"
+  },
+  "devDependencies": {
+    "@types/react": "~19.0.10",
+    "typescript": "^5.9.3"
+  }
 }

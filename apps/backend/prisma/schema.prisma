@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String               @id @default(cuid())
+  externalId String               @unique
+  email      String?
+  threads    ConversationThread[]
+  audits     AgentAudit[]
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+}
+
+model ConversationThread {
+  id        String      @id @default(cuid())
+  userId    String
+  title     String?
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  audits    AgentAudit[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model AgentAudit {
+  id            String              @id @default(cuid())
+  userId        String
+  threadId      String?
+  action        String
+  status        String
+  inputPayload  Json
+  outputPayload Json?
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  thread        ConversationThread? @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  createdAt     DateTime            @default(now())
+
+  @@index([userId, createdAt])
+  @@index([threadId, createdAt])
+}

@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "MyAgent",
+    "slug": "myagent",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "edgeToEdgeEnabled": true
+    },
+    "extra": {
+      "backendUrl": "http://localhost:3000",
+      "userId": "demo-user"
+    }
+  }
+}
