@@ -1,34 +1,34 @@
-# MyAgent
+﻿# MyAgent
 
 Assistente pessoal com IA em arquitetura monorepo, com foco em:
 - conversa em linguagem natural
-- orquestração via backend próprio
-- auditoria de ações
-- base para integrações com agenda, e-mail, finanças e notificações
+- orquestraÃ§Ã£o via backend prÃ³prio
+- auditoria de aÃ§Ãµes
+- base para integraÃ§Ãµes com agenda, e-mail, finanÃ§as e notificaÃ§Ãµes
 
-Este repositório já possui um scaffold funcional de:
+Este repositÃ³rio jÃ¡ possui um scaffold funcional de:
 - backend (`Fastify + Prisma + PostgreSQL`)
 - mobile (`React Native + Expo`)
 - pacotes compartilhados (`contracts`, `sdk-client`, `domain`, `tool-definitions`)
 
 ---
 
-## 1) Visão geral da arquitetura
+## 1) VisÃ£o geral da arquitetura
 
 Fluxo alvo:
 
-`Usuário -> App Mobile -> Backend -> OpenAI / Google / API Financeira / Scheduler / Push`
+`UsuÃ¡rio -> App Mobile -> Backend -> OpenAI / Google / API Financeira / Scheduler / Push`
 
-Princípios implementados no scaffold:
+PrincÃ­pios implementados no scaffold:
 - app mobile fala apenas com o backend
-- backend centraliza regras, autenticação e auditoria
-- ações sensíveis devem ser confirmadas (a regra está prevista; execução real de tools ainda será evoluída)
+- backend centraliza regras, autenticaÃ§Ã£o e auditoria
+- aÃ§Ãµes sensÃ­veis devem ser confirmadas (a regra estÃ¡ prevista; execuÃ§Ã£o real de tools ainda serÃ¡ evoluÃ­da)
 
-Estado atual (MVP técnico inicial):
+Estado atual (MVP tÃ©cnico inicial):
 - endpoint `POST /chat` funcional
-- criação automática de thread de conversa
-- criação de registro de auditoria por interação
-- autenticação mínima de desenvolvimento via header `x-user-id`
+- criaÃ§Ã£o automÃ¡tica de thread de conversa
+- criaÃ§Ã£o de registro de auditoria por interaÃ§Ã£o
+- autenticaÃ§Ã£o mÃ­nima de desenvolvimento via header `x-user-id`
 
 ---
 
@@ -42,13 +42,13 @@ myagent/
   packages/
     contracts/            # Schemas e tipos compartilhados (Zod)
     sdk-client/           # Cliente TypeScript para consumir backend
-    domain/               # Regras de domínio (base)
-    tool-definitions/     # Catálogo de tools (base)
-    config/               # Configurações compartilhadas
+    domain/               # Regras de domÃ­nio (base)
+    tool-definitions/     # CatÃ¡logo de tools (base)
+    config/               # ConfiguraÃ§Ãµes compartilhadas
   infra/
     docker/               # docker-compose (Postgres + Redis)
-    migrations/           # espaço para artefatos complementares
-    observability/        # espaço para observabilidade
+    migrations/           # espaÃ§o para artefatos complementares
+    observability/        # espaÃ§o para observabilidade
   docs/
     architecture/
     adr/
@@ -56,7 +56,7 @@ myagent/
 
 ---
 
-## 3) Pré-requisitos
+## 3) PrÃ©-requisitos
 
 Instale no ambiente local:
 - Node.js `>= 22`
@@ -74,7 +74,7 @@ Para rodar iOS localmente:
 
 ## 4) Setup do ambiente (passo a passo)
 
-### 4.1 Clonar e instalar dependências
+### 4.1 Clonar e instalar dependÃªncias
 
 ```bash
 git clone <url-do-repositorio>
@@ -83,7 +83,7 @@ corepack pnpm install --ignore-scripts
 ```
 
 Nota:
-- o projeto usa `pnpm` via `corepack`, não `npm`.
+- o projeto usa `pnpm` via `corepack`, nÃ£o `npm`.
 
 ### 4.2 Subir infraestrutura local
 
@@ -91,7 +91,7 @@ Nota:
 docker compose -f infra/docker/docker-compose.yml up -d
 ```
 
-Serviços esperados:
+ServiÃ§os esperados:
 - PostgreSQL em `localhost:5433`
 - Redis em `localhost:6379`
 
@@ -115,6 +115,11 @@ Windows PowerShell:
 Copy-Item apps/backend/.env.example apps/backend/.env
 ```
 
+Depois de copiar, configure no `apps/backend/.env`:
+- `OPENAI_API_KEY` (obrigatorio para `POST /chat`)
+- `OPENAI_MODEL` (padrao: `gpt-5.4-mini`)
+- `OPENAI_REASONING_EFFORT` (opcional)
+
 Gerar client Prisma e aplicar migration:
 
 ```bash
@@ -124,15 +129,15 @@ corepack pnpm --filter @myagent/backend exec prisma migrate dev --name init
 
 ### 4.4 Configurar mobile
 
-A configuração atual do mobile está em:
+A configuraÃ§Ã£o atual do mobile estÃ¡ em:
 - `apps/mobile/app.json` -> `expo.extra.backendUrl`
 - `apps/mobile/app.json` -> `expo.extra.userId`
 
-Por padrão:
+Por padrÃ£o:
 - `backendUrl`: `http://localhost:3000`
 - `userId`: `demo-user`
 
-Se for testar em dispositivo físico, troque `backendUrl` para o IP da sua máquina na rede local.
+Se for testar em dispositivo fÃ­sico, troque `backendUrl` para o IP da sua mÃ¡quina na rede local.
 
 ---
 
@@ -144,7 +149,7 @@ Se for testar em dispositivo físico, troque `backendUrl` para o IP da sua máqu
 corepack pnpm --filter @myagent/backend dev
 ```
 
-Backend disponível em:
+Backend disponÃ­vel em:
 - `http://localhost:3000`
 
 Endpoints atuais:
@@ -159,7 +164,7 @@ Em outro terminal:
 corepack pnpm --filter @myagent/mobile dev
 ```
 
-Comandos úteis:
+Comandos Ãºteis:
 
 ```bash
 corepack pnpm --filter @myagent/mobile android
@@ -169,7 +174,7 @@ corepack pnpm --filter @myagent/mobile web
 
 ---
 
-## 6) Scripts úteis
+## 6) Scripts Ãºteis
 
 Na raiz do monorepo:
 
@@ -196,7 +201,7 @@ corepack pnpm --filter @myagent/mobile typecheck
 
 ---
 
-## 7) Validação rápida do setup
+## 7) ValidaÃ§Ã£o rÃ¡pida do setup
 
 ### 7.1 Healthcheck
 
@@ -229,7 +234,7 @@ Resposta esperada (exemplo):
 {
   "threadId": "cmxxxxx",
   "auditId": "cmxxxxx",
-  "answer": "Mensagem recebida. Próximo passo: integrar Responses API + ferramentas de agenda/finanças com confirmação para escrita."
+  "answer": "Resposta gerada pelo modelo da OpenAI."
 }
 ```
 
@@ -244,12 +249,12 @@ Request:
 ```json
 {
   "threadId": "opcional",
-  "message": "texto obrigatório"
+  "message": "texto obrigatÃ³rio"
 }
 ```
 
 Headers:
-- `x-user-id` (obrigatório)
+- `x-user-id` (obrigatÃ³rio)
 
 Response:
 
@@ -263,9 +268,11 @@ Response:
 
 Erros comuns:
 - `401 missing_user` (header ausente)
-- `400 invalid_request` (payload inválido)
+- `400 invalid_request` (payload invÃ¡lido)
 - `400 empty_message` (mensagem vazia)
-- `404 thread_not_found` (thread não pertence ao usuário)
+- `404 thread_not_found` (thread nÃ£o pertence ao usuÃ¡rio)
+- `503 openai_not_configured` (`OPENAI_API_KEY` ausente)
+- `502 openai_request_failed` (falha ao chamar OpenAI)
 
 ---
 
@@ -275,11 +282,11 @@ Entidades implementadas:
 - `User`
   - `id`, `externalId`, `email`, timestamps
 - `ConversationThread`
-  - vínculo com `User`, `title`, timestamps
+  - vÃ­nculo com `User`, `title`, `lastResponseId`, timestamps
 - `AgentAudit`
-  - vínculo com `User`/`ConversationThread`, `action`, `status`, `inputPayload`, `outputPayload`, timestamp
+  - vÃ­nculo com `User`/`ConversationThread`, `action`, `status`, `inputPayload`, `outputPayload`, timestamp
 
-Arquivo de referência:
+Arquivo de referÃªncia:
 - `apps/backend/prisma/schema.prisma`
 
 ---
@@ -288,20 +295,20 @@ Arquivo de referência:
 
 ### Porta 5432 ocupada
 
-O projeto já usa `5433` para evitar conflito:
+O projeto jÃ¡ usa `5433` para evitar conflito:
 - `infra/docker/docker-compose.yml`: `5433:5432`
 - `apps/backend/.env.example`: `localhost:5433`
 
-### Backend não conecta no banco
+### Backend nÃ£o conecta no banco
 
 Verifique:
 1. containers ativos (`docker compose ... ps`)
 2. valor de `DATABASE_URL` em `apps/backend/.env`
 3. migration aplicada (`prisma migrate dev`)
 
-### Mobile não conecta no backend no dispositivo físico
+### Mobile nÃ£o conecta no backend no dispositivo fÃ­sico
 
-Use IP local da máquina host em `apps/mobile/app.json`, por exemplo:
+Use IP local da mÃ¡quina host em `apps/mobile/app.json`, por exemplo:
 
 ```json
 "extra": {
@@ -310,29 +317,29 @@ Use IP local da máquina host em `apps/mobile/app.json`, por exemplo:
 }
 ```
 
-### `x-user-id` obrigatório
+### `x-user-id` obrigatÃ³rio
 
 Sem o header, todas as rotas (exceto `/health`) retornam `401`.
 
 ---
 
-## 11) Roadmap técnico imediato
+## 11) Roadmap tÃ©cnico imediato
 
-Próximos incrementos recomendados:
+PrÃ³ximos incrementos recomendados:
 1. Integrar OpenAI Responses API no `POST /chat`.
 2. Implementar tools de agenda (`calendar.list_events`, `calendar.find_free_slots`).
-3. Adicionar confirmação explícita para ações de escrita.
-4. Evoluir autenticação de `x-user-id` para fluxo real (JWT/OAuth).
+3. Adicionar confirmaÃ§Ã£o explÃ­cita para aÃ§Ãµes de escrita.
+4. Evoluir autenticaÃ§Ã£o de `x-user-id` para fluxo real (JWT/OAuth).
 5. Expandir auditoria e observabilidade.
 
 ---
 
-## 12) Convenções de desenvolvimento
+## 12) ConvenÃ§Ãµes de desenvolvimento
 
 - Linguagem principal: TypeScript
 - Gerenciador de pacotes: `pnpm` (via `corepack`)
 - Monorepo com workspaces
-- Validação de tipos com `tsc`
+- ValidaÃ§Ã£o de tipos com `tsc`
 - Contratos compartilhados em `packages/contracts`
 
 Antes de abrir PR, execute:
@@ -341,3 +348,4 @@ Antes de abrir PR, execute:
 corepack pnpm typecheck
 corepack pnpm build
 ```
+

@@ -4,6 +4,7 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import { ChatRequestSchema } from "@myagent/contracts";
 import { prisma } from "./db.js";
+import { generateAssistantReply, OpenAIConfigError } from "./openai.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -66,6 +67,7 @@ app.post("/chat", async (request, reply) => {
   }
 
   let threadId = parsed.data.threadId;
+  let threadLastResponseId: string | undefined;
 
   if (threadId) {
     const existing = await prisma.conversationThread.findUnique({
@@ -77,6 +79,8 @@ app.post("/chat", async (request, reply) => {
         message: "Thread not found for current user"
       });
     }
+
+    threadLastResponseId = existing.lastResponseId ?? undefined;
   } else {
     const created = await prisma.conversationThread.create({
       data: {
@@ -87,30 +91,80 @@ app.post("/chat", async (request, reply) => {
     threadId = created.id;
   }
 
-  const answer =
-    "Mensagem recebida. Próximo passo: integrar Responses API + ferramentas de agenda/finanças com confirmação para escrita.";
-
-  const audit = await prisma.agentAudit.create({
-    data: {
-      userId: request.authUser.id,
-      threadId,
-      action: "chat.exchange",
-      status: "completed",
-      inputPayload: {
-        threadId,
-        message
-      },
-      outputPayload: {
-        answer
-      }
-    }
-  });
-
-  return {
+  const inputPayload = {
     threadId,
-    auditId: audit.id,
-    answer
+    message,
+    openai: {
+      model: process.env.OPENAI_MODEL?.trim() || "gpt-5.4-mini",
+      previousResponseId: threadLastResponseId ?? null
+    }
   };
+
+  try {
+    const openaiResult = await generateAssistantReply({
+      message,
+      previousResponseId: threadLastResponseId
+    });
+
+    await prisma.conversationThread.update({
+      where: { id: threadId },
+      data: { lastResponseId: openaiResult.responseId }
+    });
+
+    const audit = await prisma.agentAudit.create({
+      data: {
+        userId: request.authUser.id,
+        threadId,
+        action: "chat.exchange",
+        status: "completed",
+        inputPayload,
+        outputPayload: {
+          answer: openaiResult.answer,
+          openai: {
+            responseId: openaiResult.responseId,
+            model: openaiResult.model,
+            usage: openaiResult.usage
+          }
+        }
+      }
+    });
+
+    return {
+      threadId,
+      auditId: audit.id,
+      answer: openaiResult.answer
+    };
+  } catch (error) {
+    const messageText = error instanceof Error ? error.message : "Unexpected chat orchestration error.";
+    const statusCode = error instanceof OpenAIConfigError ? 503 : 502;
+    const errorCode = error instanceof OpenAIConfigError ? "openai_not_configured" : "openai_request_failed";
+
+    const audit = await prisma.agentAudit.create({
+      data: {
+        userId: request.authUser.id,
+        threadId,
+        action: "chat.exchange",
+        status: "failed",
+        inputPayload,
+        outputPayload: {
+          error: messageText
+        }
+      }
+    });
+
+    request.log.error({
+      msg: "Chat exchange failed",
+      error: messageText,
+      threadId,
+      auditId: audit.id
+    });
+
+    return reply.status(statusCode).send({
+      error: errorCode,
+      message: messageText,
+      auditId: audit.id
+    });
+  }
 });
 
 const port = Number(process.env.PORT ?? 3000);

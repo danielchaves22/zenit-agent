@@ -21,6 +21,7 @@ model ConversationThread {
   id        String      @id @default(cuid())
   userId    String
   title     String?
+  lastResponseId String?
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   audits    AgentAudit[]
   createdAt DateTime    @default(now())
